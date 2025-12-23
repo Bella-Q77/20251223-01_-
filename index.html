@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>幼儿园圣诞树生成器</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            min-height: 100vh;
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Marker Felt', sans-serif;
+        }
+        .login-card {
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        .christmas-tree {
+            position: relative;
+            width: 200px;
+            height: 300px;
+            margin: 20px auto;
+        }
+        .tree-top {
+            width: 0;
+            height: 0;
+            border-left: 50px solid transparent;
+            border-right: 50px solid transparent;
+            border-bottom: 100px solid #2ecc71;
+            margin: 0 auto;
+        }
+        .tree-middle {
+            width: 0;
+            height: 0;
+            border-left: 70px solid transparent;
+            border-right: 70px solid transparent;
+            border-bottom: 120px solid #27ae60;
+            margin: -20px auto 0;
+        }
+        .tree-bottom {
+            width: 0;
+            height: 0;
+            border-left: 90px solid transparent;
+            border-right: 90px solid transparent;
+            border-bottom: 140px solid #229954;
+            margin: -20px auto 0;
+        }
+        .tree-trunk {
+            width: 30px;
+            height: 60px;
+            background: #8b4513;
+            margin: -10px auto 0;
+            border-radius: 3px;
+        }
+        .star {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 25px solid transparent;
+            border-right: 25px solid transparent;
+            border-bottom: 50px solid #f1c40f;
+        }
+        .star::before {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: -25px;
+            width: 0;
+            height: 0;
+            border-left: 25px solid transparent;
+            border-right: 25px solid transparent;
+            border-top: 50px solid #f1c40f;
+        }
+        .ornament {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            animation: twinkle 2s infinite alternate;
+        }
+        @keyframes twinkle {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(1.2); opacity: 0.8; }
+        }
+        .name-tag {
+            position: absolute;
+            bottom: -80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ffffff;
+            padding: 10px 20px;
+            border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            font-size: 18px;
+            font-weight: bold;
+            color: #3498db;
+        }
+    </style>
+</head>
+<body>
+    <!-- 登录界面 -->
+    <div id="login-section" class="min-h-screen flex items-center justify-center p-4">
+        <div class="login-card p-8 max-w-md w-full">
+            <div class="text-center mb-6">
+                <h1 class="text-4xl font-bold text-emerald-600 mb-2">🎄 幼儿园圣诞树生成器</h1>
+                <p class="text-gray-600">管理员登录</p>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label for="username" class="block text-sm font-medium text-gray-700 mb-1">账号</label>
+                    <input type="text" id="username" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="请输入账号">
+                </div>
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700 mb-1">密码</label>
+                    <input type="password" id="password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="请输入密码">
+                </div>
+                <button id="login-btn" class="w-full py-3 bg-emerald-600 text-white rounded-lg font-bold hover:bg-emerald-700 transition-colors">
+                    登录
+                </button>
+            </div>
+            <div id="login-error" class="text-red-500 text-center mt-4 hidden">账号或密码错误</div>
+        </div>
+    </div>
+
+    <!-- 圣诞树生成界面 -->
+    <div id="generator-section" class="min-h-screen flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-2xl w-full">
+            <div class="text-center mb-8">
+                <h1 class="text-5xl font-bold text-emerald-600 mb-3">🎄 小朋友专属圣诞树</h1>
+                <p class="text-gray-600 text-lg">输入小朋友的名字，生成独一无二的圣诞树</p>
+            </div>
+            
+            <div class="space-y-6">
+                <!-- 姓名输入区域 -->
+                <div class="text-center">
+                    <label for="child-name" class="block text-xl font-medium text-gray-700 mb-3">小朋友姓名</label>
+                    <input type="text" id="child-name" class="w-full max-w-md px-4 py-3 border-2 border-emerald-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-xl text-center" placeholder="请输入小朋友的名字">
+                </div>
+                
+                <!-- 生成按钮 -->
+                <div class="text-center">
+                    <button id="generate-btn" class="px-8 py-3 bg-emerald-600 text-white rounded-lg font-bold text-xl hover:bg-emerald-700 transition-colors shadow-lg">
+                        生成圣诞树
+                    </button>
+                </div>
+                
+                <!-- 圣诞树展示区域 -->
+                <div id="christmas-tree-container" class="hidden">
+                    <div class="christmas-tree">
+                        <div class="star"></div>
+                        <div class="tree-top"></div>
+                        <div class="tree-middle"></div>
+                        <div class="tree-bottom"></div>
+                        <div class="tree-trunk"></div>
+                        <div class="name-tag" id="child-name-display"></div>
+                    </div>
+                    <div class="text-center mt-6">
+                        <button id="save-btn" class="px-6 py-2 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition-colors">
+                            保存圣诞树
+                        </button>
+                        <button id="new-tree-btn" class="px-6 py-2 ml-4 bg-gray-600 text-white rounded-lg font-bold hover:bg-gray-700 transition-colors">
+                            生成新圣诞树
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 已保存的圣诞树列表 -->
+                <div class="mt-10">
+                    <h2 class="text-2xl font-bold text-emerald-600 mb-4 text-center">已保存的圣诞树</h2>
+                    <div id="saved-trees" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                        <!-- 已保存的圣诞树卡片将在这里动态生成 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 登录验证
+        document.getElementById('login-btn').addEventListener('click', function() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorMsg = document.getElementById('login-error');
+            
+            if (username === 'test' && password === 'admin') {
+                // 登录成功，切换到生成器界面
+                document.getElementById('login-section').classList.add('hidden');
+                document.getElementById('generator-section').classList.remove('hidden');
+                loadSavedTrees();
+            } else {
+                // 登录失败，显示错误信息
+                errorMsg.classList.remove('hidden');
+                setTimeout(() => {
+                    errorMsg.classList.add('hidden');
+                }, 3000);
+            }
+        });
+        
+        // 生成圣诞树
+        document.getElementById('generate-btn').addEventListener('click', function() {
+            const childName = document.getElementById('child-name').value.trim();
+            
+            if (childName) {
+                // 显示圣诞树
+                document.getElementById('christmas-tree-container').classList.remove('hidden');
+                document.getElementById('child-name-display').textContent = childName;
+                
+                // 添加装饰品
+                addOrnaments();
+            }
+        });
+        
+        // 添加装饰品
+        function addOrnaments() {
+            const tree = document.querySelector('.christmas-tree');
+            // 移除已有的装饰品
+            const existingOrnaments = tree.querySelectorAll('.ornament');
+            existingOrnaments.forEach(ornament => ornament.remove());
+            
+            // 生成随机颜色的装饰品
+            const colors = ['#e74c3c', '#3498db', '#f1c40f', '#9b59b6', '#1abc9c', '#e67e22'];
+            const numOrnaments = 15;
+            
+            for (let i = 0; i < numOrnaments; i++) {
+                const ornament = document.createElement('div');
+                ornament.className = 'ornament';
+                
+                // 随机位置
+                const x = Math.random() * 180 + 10; // 10-190px
+                const y = Math.random() * 240 + 20; // 20-260px
+                ornament.style.left = x + 'px';
+                ornament.style.top = y + 'px';
+                
+                // 随机颜色
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                ornament.style.background = color;
+                
+                tree.appendChild(ornament);
+            }
+        }
+        
+        // 保存圣诞树
+        document.getElementById('save-btn').addEventListener('click', function() {
+            const childName = document.getElementById('child-name-display').textContent;
+            
+            // 保存到localStorage
+            const savedTrees = JSON.parse(localStorage.getItem('savedTrees')) || [];
+            const existingIndex = savedTrees.findIndex(tree => tree.name === childName);
+            
+            if (existingIndex !== -1) {
+                // 更新已存在的圣诞树
+                savedTrees[existingIndex] = { name: childName };
+            } else {
+                // 添加新的圣诞树
+                savedTrees.push({ name: childName });
+            }
+            
+            localStorage.setItem('savedTrees', JSON.stringify(savedTrees));
+            alert('圣诞树已保存！');
+            loadSavedTrees();
+        });
+        
+        // 生成新圣诞树
+        document.getElementById('new-tree-btn').addEventListener('click', function() {
+            document.getElementById('child-name').value = '';
+            document.getElementById('christmas-tree-container').classList.add('hidden');
+            // 移除已有的装饰品
+            const tree = document.querySelector('.christmas-tree');
+            const existingOrnaments = tree.querySelectorAll('.ornament');
+            existingOrnaments.forEach(ornament => ornament.remove());
+        });
+        
+        // 加载已保存的圣诞树
+        function loadSavedTrees() {
+            const savedTrees = JSON.parse(localStorage.getItem('savedTrees')) || [];
+            const container = document.getElementById('saved-trees');
+            container.innerHTML = '';
+            
+            if (savedTrees.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-center col-span-full">暂无已保存的圣诞树</p>';
+                return;
+            }
+            
+            savedTrees.forEach(tree => {
+                const card = document.createElement('div');
+                card.className = 'bg-white border-2 border-emerald-300 rounded-lg p-4 text-center hover:shadow-lg transition-shadow cursor-pointer';
+                
+                card.innerHTML = `
+                    <div class="text-2xl font-bold text-emerald-600 mb-2">${tree.name}</div>
+                `;
+                
+                // 点击卡片显示圣诞树
+                card.addEventListener('click', function() {
+                    document.getElementById('child-name').value = tree.name;
+                    document.getElementById('child-name-display').textContent = tree.name;
+                    document.getElementById('christmas-tree-container').classList.remove('hidden');
+                    addOrnaments();
+                });
+                
+                container.appendChild(card);
+            });
+        }
+    </script>
+</body>
+</html>
